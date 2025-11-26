@@ -94,18 +94,15 @@ window.addEventListener("load", () => {
   }
 
   // 「旅に出る」ボタン　　
-  if (confirmGoBtn) {
-    confirmGoBtn.addEventListener("click", async () => {
-      const destEl = document.getElementById("confirmDestination");
-      const destText = destEl ? destEl.textContent.trim() : "";
+confirmGoBtn.addEventListener("click", async () => {
+  const destText = document.getElementById("confirmDestination").textContent.trim();
 
-      currentTrip.destination = destText || "";
-      currentTrip.createdAt = Date.now();
+  currentTrip.destination = destText || "";
+  currentTrip.participants = [...currentTrip.participants]; // ← これ追加（同期）
+  currentTrip.createdAt = Date.now();
 
-      const tripId = await createTrip();
-      console.log("Trip saved from button:", tripId);
-    });
-  }
+  const tripId = await createTrip();
+  console.log("Trip saved from button:", tripId);
 });
 
 
