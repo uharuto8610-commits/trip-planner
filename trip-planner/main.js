@@ -1,31 +1,3 @@
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-
-// Firebase config（index.htmlと同じ）
-const firebaseConfig = {
-  apiKey: "AIzaSyDnfFFRggET9B2hndWS6y0L2nNLK7_8zvo",
-  authDomain: "trip-planner-data.firebaseapp.com",
-  projectId: "trip-planner-data",
-  storageBucket: "trip-planner-data.appspot.com",
-  messagingSenderId: "1065188396872",
-  appId: "1:1065188396872:web:35d2edb391fc95993bed7d"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// ⭐ テスト保存関数
-async function testSave() {
-  await setDoc(doc(db, "trips", "test"), {
-    message: "Hello Firebase!",
-    time: Date.now()
-  });
-  console.log("Saved to Firestore!");
-}
-
-// ページ読み込み時に実行
-testSave();
-
 const STORAGE_KEY = 'trip-split-v1';
 
 // 目安レート（1通貨あたりの円）
