@@ -1144,3 +1144,5 @@ function compressAndSetPhoto(file) {
     reader.readAsDataURL(file);
   });
 }
+
+window.createTrip = createTrip;
