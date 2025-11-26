@@ -1,5 +1,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  addDoc,
+  collection,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDnfFFRggET9B2hndWS6y0L2nNLK7_8zvo",
@@ -9,6 +16,23 @@ const firebaseConfig = {
   messagingSenderId: "1065188396872",
   appId: "1:1065188396872:web:35d2edb391fc95993bed7d"
 };
+
+// 今の旅のIDを覚えておくための変数
+let currentTripId = null;
+
+// 旅を作成して Firestore に保存する関数
+async function createTrip({ destination, baseCurrency }) {
+  const tripsRef = collection(db, "trips");
+  const docRef = await addDoc(tripsRef, {
+    destination,
+    baseCurrency,
+    createdAt: serverTimestamp()
+  });
+  currentTripId = docRef.id;        // 作った tripId を保存しておく
+  console.log("Trip created in Firestore:", currentTripId);
+  return currentTripId;
+}
+
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
