@@ -1,7 +1,15 @@
 import { initializeApp } from "...firebase-app.js";
 import { getFirestore, doc, setDoc, addDoc, collection, serverTimestamp } from "...firebase-firestore.js";
 
-const firebaseConfig = { ... };
+const firebaseConfig = {
+  apiKey: "AIzaSyDnfFFRggET9B2hndWS6y0L2nNLK7_8zvo",
+  authDomain: "trip-planner-data.firebaseapp.com",
+  projectId: "trip-planner-data",
+  storageBucket: "trip-planner-data.appspot.com",
+  messagingSenderId: "1065188396872",
+  appId: "1:1065188396872:web:35d2edb391fc95993bed7d"
+};
+
 
 // ← Firebase 初期化をここに移動
 const app = initializeApp(firebaseConfig);
