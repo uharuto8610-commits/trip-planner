@@ -81,7 +81,7 @@ window.addEventListener("load", () => {
 
         console.log("participants:", currentTrip.participants);
       }
-
+　
       participantInput.value = "";
     });
   }
