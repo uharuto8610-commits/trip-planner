@@ -34,10 +34,10 @@ async function createTrip() {
   try {
     const tripsRef = collection(db, "trips");
 
-    // Firestore に送るデータを明示的に作る
+    // Firestore に送るデータ
     const payload = {
       destination: currentTrip.destination,
-      participants: [...currentTrip.participants], // ← ここで参加者をコピーして送る
+      participants: [...currentTrip.participants],
       currency: currentTrip.currency || "",
       createdAt: serverTimestamp()
     };
@@ -51,8 +51,7 @@ async function createTrip() {
     console.error("❌ Save error:", error);
     alert("保存に失敗しました");
   }
-}　
-
+}
 
 window.createTrip = createTrip;
 
@@ -60,10 +59,10 @@ window.createTrip = createTrip;
 window.addEventListener("load", () => {
   console.log("trip-planner script loaded");
 
-  const participantInput = document.getElementById("participantName");
+  const participantInput  = document.getElementById("participantName");
   const addParticipantBtn = document.getElementById("addParticipant");
   const participantListEl = document.getElementById("participantList");
-  const confirmGoBtn = document.getElementById("confirmGo");
+  const confirmGoBtn      = document.getElementById("confirmGo");
 
   console.log("elements found:", {
     participantInput,
@@ -88,23 +87,27 @@ window.addEventListener("load", () => {
 
         console.log("participants:", currentTrip.participants);
       }
-　
+
       participantInput.value = "";
     });
   }
 
-  // 「旅に出る」ボタン　　
-confirmGoBtn.addEventListener("click", async () => {
-  const destText = document.getElementById("confirmDestination").textContent.trim();
+  // 「旅に出る」ボタン
+  if (confirmGoBtn) {
+    confirmGoBtn.addEventListener("click", async () => {
+      const destText = document
+        .getElementById("confirmDestination")
+        .textContent
+        .trim();
 
-  currentTrip.destination = destText || "";
-  currentTrip.participants = [...currentTrip.participants]; // ← これ追加（同期）
-  currentTrip.createdAt = Date.now();
+      currentTrip.destination = destText || "";
+      currentTrip.createdAt   = Date.now();
 
-  const tripId = await createTrip();
-  console.log("Trip saved from button:", tripId);
+      const tripId = await createTrip();
+      console.log("Trip saved from button:", tripId);
+    });
+  }　
 });
-
 
 
 
