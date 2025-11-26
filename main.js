@@ -86,7 +86,7 @@ window.addEventListener("load", () => {
     });
   }
 
-  // 「旅に出る」ボタン
+  // 「旅に出る」ボタン　　
   if (confirmGoBtn) {
     confirmGoBtn.addEventListener("click", async () => {
       const destEl = document.getElementById("confirmDestination");
