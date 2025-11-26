@@ -36,7 +36,7 @@ let ownerToken = localStorage.getItem('trip-owner-token') || '';
 
 // ---- Firestore: 旅を保存する関数 ----
 async function createTrip() {
-  try {
+  try {　
     const tripsRef = collection(db, "trips");
 
     // Firestore に送るデータ
@@ -1168,25 +1168,7 @@ function renderConfirmEditNames() {
   list.innerHTML = '';
   state.participants.forEach((p, idx) => {
     const li = document.createElement('li');
-    li.innerHTML = `<span>${idx + 1}. ${p.name}</span>`;
-    const del = document.createElement('button');
-    del.type = 'button';
-    del.className = 'delete-btn';
-    del.textContent = '削除';
-    del.onclick = () => {
-      state.participants.splice(idx, 1);
-      state.expectedCount = state.participants.length;
-      shareSelection = new Set(state.participants.map((m) => m.id));
-      saveState();
-      renderParticipants();
-      renderExpenses();
-      renderSettlement();
-      renderConfirmSummary();
-      updateFormLock();
-      updateNameLock();
-      updatePrepSteps();
-    };
-    li.appendChild(del);
+    li.textContent = p.name; // 最終確認では名前のみ表示
     list.appendChild(li);
   });
   if (els.confirmDestinationInput) {
