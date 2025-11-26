@@ -1,5 +1,12 @@
-import { initializeApp } from "...firebase-app.js";
-import { getFirestore, doc, setDoc, addDoc, collection, serverTimestamp } from "...firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { 
+  getFirestore, 
+  doc, 
+  setDoc, 
+  addDoc, 
+  collection, 
+  serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDnfFFRggET9B2hndWS6y0L2nNLK7_8zvo",
@@ -10,27 +17,11 @@ const firebaseConfig = {
   appId: "1:1065188396872:web:35d2edb391fc95993bed7d"
 };
 
-
-// ← Firebase 初期化をここに移動
+// ---- Firebase 接続 ----
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ここから createTrip
-let currentTripId = null;
-
-async function createTrip({ destination, baseCurrency }) {
-  const tripsRef = collection(db, "trips");
-  const docRef = await addDoc(tripsRef, {
-    destination,
-    baseCurrency,
-    createdAt: serverTimestamp()
-  });
-  currentTripId = docRef.id;
-  console.log("Trip created in Firestore:", currentTripId);
-  return currentTripId;
-}
-
-// ==== Global State ====
+// ---- 状態オブジェクト ----
 let currentTrip = {
   destination: "",
   participants: [],
@@ -38,24 +29,24 @@ let currentTrip = {
   createdAt: Date.now()
 };
 
-window.createTrip = createTrip; 
+window.currentTrip = currentTrip;
 
-// ==== Firestore: 旅を保存する関数 ====
+// ---- Firestore: 旅を保存する関数 ----
 async function createTrip() {
   try {
-    // ランダムIDのドキュメントを作成
     const tripsRef = collection(db, "trips");
     const docRef = await addDoc(tripsRef, currentTrip);
 
     console.log("🔥 Trip saved with ID:", docRef.id);
     alert("保存しました！");
-    
     return docRef.id;
   } catch (error) {
     console.error("❌ Save error:", error);
     alert("保存に失敗しました");
   }
 }
+
+window.createTrip = createTrip;
 
 
 
