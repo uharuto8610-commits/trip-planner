@@ -47,7 +47,8 @@ let currentTrip = {
 };
 
 // ←ここ追加
-window.currentTrip = currentTrip;
+
+window.currentTrip = currentTrip; 
 
 // ==== Firestore: 旅を保存する関数 ====
 async function createTrip() {
@@ -1145,4 +1146,4 @@ function compressAndSetPhoto(file) {
   });
 }
 
-window.createTrip = createTrip;
+
