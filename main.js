@@ -46,6 +46,9 @@ let currentTrip = {
   createdAt: Date.now()
 };
 
+// ←ここ追加
+window.currentTrip = currentTrip;
+
 // ==== Firestore: 旅を保存する関数 ====
 async function createTrip() {
   try {
