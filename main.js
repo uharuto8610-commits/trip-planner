@@ -48,7 +48,49 @@ async function createTrip() {
 
 window.createTrip = createTrip;
 
+// ... import, firebaseConfig, initializeApp, db ...
 
+let currentTrip = {
+  destination: "",
+  participants: [],
+  currency: "",
+  createdAt: Date.now()
+};
+
+window.currentTrip = currentTrip;
+
+async function createTrip() {
+  try {
+    const tripsRef = collection(db, "trips");
+    const docRef = await addDoc(tripsRef, currentTrip);
+
+    console.log("🔥 Trip saved with ID:", docRef.id);
+    alert("保存しました！");
+    return docRef.id;
+  } catch (error) {
+    console.error("❌ Save error:", error);
+    alert("保存に失敗しました");
+  }
+}
+
+window.createTrip = createTrip;
+
+// 「旅に出る」ボタンと連携
+const confirmGoBtn = document.getElementById("confirmGo");
+
+confirmGoBtn.addEventListener("click", async () => {
+  // 確認画面に表示されている行き先を currentTrip に入れる
+  const destText = document
+    .getElementById("confirmDestination")
+    .textContent
+    .trim();
+
+  currentTrip.destination = destText || "";
+  currentTrip.createdAt = Date.now(); // 毎回更新しておく
+
+  const tripId = await createTrip();
+  console.log("Trip saved from button:", tripId);
+});
 
 
 const STORAGE_KEY = 'trip-split-v1';
