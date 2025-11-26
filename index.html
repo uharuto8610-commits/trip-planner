@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>旅の割り勘ノート</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <div class="hero__text">
+        <p class="eyebrow">人数と名前と行き先をセット → 外貨も自動で用意</p>
+        <h1>旅の割り勘ノート</h1>
+        <p class="lede">参加者をセットして、支払いを積み上げるだけ。外貨でも1円単位まで公平に。</p>
+      </div>
+      <div class="hero__pill">
+        <span>📷 必要なときだけ写真を添付</span>
+        <span>🌏 行き先から通貨を自動推測</span>
+      </div>
+    </header>
+
+    <section id="startScreen" class="panel start-screen">
+      <div class="start-content">
+        <h2>旅の割り勘ノート</h2>
+        <p class="lede">スタートボタンで旅の準備を始めます。</p>
+      </div>
+      <div class="start-actions">
+        <button id="startBtn" class="btn primary wide">スタート</button>
+      </div>
+    </section>
+
+    <section class="panel kickoff prep-flow">
+      <div class="panel__head">
+        <div>
+          <p class="eyebrow">START</p>
+          <h2>旅の準備</h2>
+          <p class="hint">参加人数と名前、行く場所を入力すると、その国の通貨を自動で選びます。</p>
+        </div>
+        <span class="pill pill--info">まずここを埋めてください</span>
+      </div>
+      <div class="form-row prep-steps">
+        <div id="step-destination" class="prep-step">
+          <label class="field">
+            <span>行く場所</span>
+            <input id="destination" type="text" placeholder="例: 韓国 / 台湾 / フランス" />
+          </label>
+          <button id="nextToCount" class="btn primary small">次へ</button>
+        </div>
+        <div id="step-count" class="prep-step hidden">
+          <label class="field">
+            <span>参加者人数</span>
+            <select id="participantCount">
+              <option value="">選んでください</option>
+              <option value="1">1人</option>
+              <option value="2">2人</option>
+              <option value="3">3人</option>
+              <option value="4">4人</option>
+              <option value="5">5人</option>
+              <option value="6">6人</option>
+              <option value="7">7人</option>
+              <option value="8">8人</option>
+              <option value="9">9人</option>
+              <option value="10">10人</option>
+              <option value="11">11人</option>
+              <option value="12">12人</option>
+              <option value="13">13人</option>
+              <option value="14">14人</option>
+              <option value="15">15人</option>
+            </select>
+          </label>
+          <button id="nextToNames" class="btn primary small">次へ</button>
+        </div>
+        <div id="step-names" class="prep-step hidden">
+          <label class="field">
+            <span>名前</span>
+            <input id="participantName" type="text" placeholder="例: 山田" />
+          </label>
+          <button id="addParticipant" class="btn primary">追加</button>
+        </div>
+      </div>
+      <div class="start-actions">
+        <div id="autoCurrencyInfo" class="pill pill--warn">行き先から通貨を自動セットします</div>
+      </div>
+      <div id="participantList" class="chips"></div>
+    </section>
+
+    <section class="panel confirm-flow">
+      <div class="confirm-head">
+        <span class="confirm-badge">CONFIRM</span>
+        <h2 class="confirm-title">最終確認</h2>
+        <p class="confirm-subtext">これで大丈夫？</p>
+      </div>
+      <div class="confirm-card">
+        <div class="confirm-block">
+          <p class="label">行き先</p>
+          <div id="confirmDestination" class="value-dest">—</div>
+        </div>
+        <div class="divider"></div>
+        <div class="confirm-block">
+          <p class="label">名前</p>
+          <div id="confirmSummary" class="value-names">—</div>
+        </div>
+      </div>
+      <div id="confirmEdit" class="confirm-edit hidden">
+        <div class="confirm-edit-block">
+          <label class="field">
+            <span>行き先を変更</span>
+            <input id="confirmDestinationInput" type="text" />
+          </label>
+        </div>
+        <div class="confirm-edit-block">
+          <div class="names-edit-head">
+            <span>名前を変更 / 削除</span>
+          </div>
+          <ul id="confirmNamesList" class="names-list"></ul>
+          <div class="names-add-row">
+            <input id="confirmAddName" type="text" placeholder="新しい名前を追加" />
+            <button id="confirmAddNameBtn" class="btn primary small">追加</button>
+          </div>
+        </div>
+      </div>
+      <div class="confirm-actions">
+        <button id="editPrep" class="btn outline">変える</button>
+        <button id="confirmGo" class="btn primary confirm-primary">旅に出る</button>
+      </div>
+    </section>
+
+    <section class="panel step-panel main-flow" id="expenseSection">
+      <div class="panel__head">
+        <div></div>
+        <span id="participantGuard" class="pill pill--warn">参加者と行き先を登録すると使えます</span>
+      </div>
+
+      <div id="journeyBar" class="info-bar"></div>
+      <div class="info-bar">
+        <span class="pill pill--info">ここから支払いを記録できます</span>
+        <span class="hint">支払った人・内容・金額・通貨を入力してください</span>
+      </div>
+
+      <div id="participantSummary" class="info-bar"></div>
+
+      <form id="expenseForm" class="expense-form">
+        <div class="form-grid">
+          <label class="field">
+            <span>支払った人</span>
+            <select id="payer"></select>
+          </label>
+          <label class="field">
+            <span>内容</span>
+            <input id="title" type="text" placeholder="例: 昼食 / タクシー" />
+          </label>
+          <label class="field">
+            <span>カテゴリ</span>
+            <select id="category"></select>
+          </label>
+          <label class="field">
+            <span>金額</span>
+            <input id="amount" type="number" min="0" step="0.01" placeholder="例: 120" />
+          </label>
+        </div>
+
+        <div class="shares">
+          <p class="shares__label">割り勘する人</p>
+          <div id="expenseParticipants" class="chips selectable"></div>
+        </div>
+
+        <div class="photo-row">
+          <button type="button" id="photoBtn" class="btn ghost">📷 写真をつける</button>
+          <input id="photoInput" type="file" accept="image/*" capture="environment" hidden />
+          <div id="photoPreview" class="photo-preview" aria-live="polite"></div>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn primary wide">支払いを追加</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel step-panel main-flow">
+      <div class="panel__head">
+        <h2></h2>
+        <div id="currencyTotals" class="chips muted"></div>
+      </div>
+      <div class="day-tabs-row">
+        <div id="dayTabs" class="chips day-tabs"></div>
+        <div class="day-actions">
+          <button id="addDayBtn" class="btn ghost small">次の日へ</button>
+          <button id="deleteDayBtn" class="btn ghost small">削除</button>
+        </div>
+      </div>
+      <div id="expenseList" class="list"></div>
+    </section>
+
+    <section class="panel step-panel main-flow">
+      <div class="panel__head">
+        <h2></h2>
+        <p class="hint"></p>
+      </div>
+      <div id="settlementSummary" class="info-bar"></div>
+      <div id="settlement" class="settlement"></div>
+      <div class="nav-row">
+        <button id="resetAll" class="btn ghost small">全てリセット</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="main.js"></script>
+  <script type="module">
+  // Firebase SDKの読み込み
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+  // 🔽 ここに自分の config コピペ 🔽
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+  apiKey: "AIzaSyDnfFFRggET9B2hndWS6y0L2nNLK7_8zvo",
+  authDomain: "trip-planner-data.firebaseapp.com",
+  projectId: "trip-planner-data",
+  storageBucket: "trip-planner-data.appspot.com",
+  messagingSenderId: "1065188396872",
+  appId: "1:1065188396872:web:35d2edb391fc95993bed7d"
+};
+
+  // 🔼 ここまで 🔼
+
+  // Firebase初期化
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  console.log("Firebase connected:", app);
+</script>
+
+
+</body>
+</html>
