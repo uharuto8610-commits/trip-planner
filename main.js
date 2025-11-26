@@ -37,6 +37,31 @@ async function createTrip({ destination, baseCurrency }) {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// ==== Global State（アプリの現在の旅データ） ====
+// ユーザーが入力した旅情報を一時的に保持
+let currentTrip = {
+  destination: "",
+  participants: [],
+  currency: "",
+  createdAt: Date.now()
+};
+
+// ==== Firestore: 旅を保存する関数 ====
+async function createTrip() {
+  try {
+    // ランダムIDのドキュメントを作成
+    const tripsRef = collection(db, "trips");
+    const docRef = await addDoc(tripsRef, currentTrip);
+
+    console.log("🔥 Trip saved with ID:", docRef.id);
+    alert("保存しました！");
+    
+    return docRef.id;
+  } catch (error) {
+    console.error("❌ Save error:", error);
+    alert("保存に失敗しました");
+  }
+}
 
 
 
