@@ -96,21 +96,7 @@ window.addEventListener("load", () => {
     });
   }
 
-  // 「旅に出る」ボタン
-  if (confirmGoBtn) {
-    confirmGoBtn.addEventListener("click", async () => {
-      const destText = document
-        .getElementById("confirmDestination")
-        .textContent
-        .trim();
-
-      currentTrip.destination = destText || "";
-      currentTrip.createdAt   = Date.now();
-
-      const tripId = await createTrip();
-      console.log("Trip saved from button:", tripId);
-    });
-  }　
+  // 「旅に出る」ボタンは state ベースの実装に統一（後段の confirmGo リスナーを使用）
 });
 
 
@@ -445,9 +431,10 @@ function bindEvents() {
     renderConfirmEditNames();
     updateVisibility();
   });
-  els.confirmGo.addEventListener('click', () => {
+  els.confirmGo.addEventListener('click', async () => {
     const ready = state.participants.length > 0 && !!state.expectedCount && !!state.destination;
     if (!ready) return alert('行き先・人数・名前をすべて入力してください');
+    await createTrip(); // Firestoreへ保存（stateを使用）
     state.stage = 'main';
     saveState();
     updateVisibility(true);
@@ -1190,4 +1177,3 @@ function compressAndSetPhoto(file) {
     reader.readAsDataURL(file);
   });
 }
-
