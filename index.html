@@ -210,29 +210,6 @@
 
   <script type="module" src="main.js"></script>
 
-  // Firebase SDKの読み込み
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-
-  // 🔽 ここに自分の config コピペ 🔽
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-  apiKey: "AIzaSyDnfFFRggET9B2hndWS6y0L2nNLK7_8zvo",
-  authDomain: "trip-planner-data.firebaseapp.com",
-  projectId: "trip-planner-data",
-  storageBucket: "trip-planner-data.appspot.com",
-  messagingSenderId: "1065188396872",
-  appId: "1:1065188396872:web:35d2edb391fc95993bed7d"
-};
-
-  // 🔼 ここまで 🔼   
-
-  // Firebase初期化
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  console.log("Firebase connected:", app);
-</script>
 
 
 </body>
