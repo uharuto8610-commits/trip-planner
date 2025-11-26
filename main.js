@@ -1058,9 +1058,11 @@ function renderConfirmSummary() {
     saveState();
   }
   const dest = state.destination || '行き先未入力';
-  const sentence = buildTripSentence();
+  const namesOnly = state.participants.length
+    ? state.participants.map((p) => p.name).join('、')
+    : '参加者未入力';
   if (els.confirmDestination) els.confirmDestination.textContent = dest;
-  els.confirmSummary.textContent = sentence;
+  els.confirmSummary.textContent = namesOnly;
   renderConfirmEditNames();
   renderJourneyBar();
   if (els.confirmEdit) {
