@@ -33,10 +33,16 @@ window.currentTrip = currentTrip;
 async function createTrip() {
   try {
     const tripsRef = collection(db, "trips");
-    const docRef = await addDoc(tripsRef, {
-      ...currentTrip,
+
+    // Firestore に送るデータを明示的に作る
+    const payload = {
+      destination: currentTrip.destination,
+      participants: [...currentTrip.participants], // ← ここで参加者をコピーして送る
+      currency: currentTrip.currency || "",
       createdAt: serverTimestamp()
-    });
+    };
+
+    const docRef = await addDoc(tripsRef, payload);
 
     console.log("🔥 Trip saved with ID:", docRef.id);
     alert("保存しました！");
@@ -46,6 +52,7 @@ async function createTrip() {
     alert("保存に失敗しました");
   }
 }
+
 
 window.createTrip = createTrip;
 
