@@ -36,9 +36,13 @@ async function createTrip() {
 
     // Firestore に送るデータ
     const payload = {
-      destination: currentTrip.destination,
-      participants: [...currentTrip.participants],
-      currency: currentTrip.currency || "",
+      destination: state.destination || currentTrip.destination || "",
+      participants: state.participants.length
+        ? state.participants.map((p) => ({ id: p.id, name: p.name }))
+        : currentTrip.participants.map((name, idx) => ({ id: `legacy-${idx}`, name })),
+      currency: state.currentCurrencyCode || currentTrip.currency || "",
+      currencyRate: state.currentRate || null,
+      expectedCount: state.expectedCount || null,
       createdAt: serverTimestamp()
     };
 
@@ -1186,5 +1190,4 @@ function compressAndSetPhoto(file) {
     reader.readAsDataURL(file);
   });
 }
-
 
