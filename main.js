@@ -51,7 +51,7 @@ async function createTrip() {
     console.error("❌ Save error:", error);
     alert("保存に失敗しました");
   }
-}
+}　
 
 
 window.createTrip = createTrip;
