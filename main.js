@@ -1,7 +1,6 @@
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
-// Firebase config（index.htmlと同じ）
 const firebaseConfig = {
   apiKey: "AIzaSyDnfFFRggET9B2hndWS6y0L2nNLK7_8zvo",
   authDomain: "trip-planner-data.firebaseapp.com",
@@ -14,7 +13,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ⭐ テスト保存関数
 async function testSave() {
   await setDoc(doc(db, "trips", "test"), {
     message: "Hello Firebase!",
@@ -23,8 +21,8 @@ async function testSave() {
   console.log("Saved to Firestore!");
 }
 
-// ページ読み込み時に実行
 testSave();
+
 
 const STORAGE_KEY = 'trip-split-v1';
 
