@@ -29,6 +29,22 @@ let currentTrip = {
 
 window.currentTrip = currentTrip;
 
+// ---- 参加者の入力とボタン ----
+const participantInput = document.getElementById("participantName");
+const addParticipantBtn = document.getElementById("addParticipant");
+
+// 名前追加ボタンが押されたとき、currentTrip.participants に反映する
+addParticipantBtn.addEventListener("click", () => {
+  const name = participantInput.value.trim();
+  if (!name) return;
+
+  // 同じ名前が重複しないようにチェック
+  if (!currentTrip.participants.includes(name)) {
+    currentTrip.participants.push(name);
+    console.log("participants:", currentTrip.participants);
+  }
+});
+
 // ---- Firestore: 旅を保存する関数 ----
 async function createTrip() {
   try {
