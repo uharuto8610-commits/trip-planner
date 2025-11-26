@@ -13,15 +13,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-async function testSave() {
-  await setDoc(doc(db, "trips", "test"), {
-    message: "Hello Firebase!",
-    time: Date.now()
-  });
-  console.log("Saved to Firestore!");
-}
 
-testSave();
+
 
 
 const STORAGE_KEY = 'trip-split-v1';
