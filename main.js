@@ -1,9 +1,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { 
-  getFirestore, 
-  addDoc, 
-  collection, 
-  serverTimestamp 
+import {
+  getFirestore,
+  addDoc,
+  collection,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -20,7 +20,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // ---- 状態オブジェクト ----
-let currentTrip = {
+const currentTrip = {
   destination: "",
   participants: [],
   currency: "",
@@ -29,29 +29,13 @@ let currentTrip = {
 
 window.currentTrip = currentTrip;
 
-// ---- 参加者の入力とボタン ----
-const participantInput = document.getElementById("participantName");
-const addParticipantBtn = document.getElementById("addParticipant");
-
-// 名前追加ボタンが押されたとき、currentTrip.participants に反映する
-addParticipantBtn.addEventListener("click", () => {
-  const name = participantInput.value.trim();
-  if (!name) return;
-
-  // 同じ名前が重複しないようにチェック
-  if (!currentTrip.participants.includes(name)) {
-    currentTrip.participants.push(name);
-    console.log("participants:", currentTrip.participants);
-  }
-});
-
 // ---- Firestore: 旅を保存する関数 ----
 async function createTrip() {
   try {
     const tripsRef = collection(db, "trips");
     const docRef = await addDoc(tripsRef, {
       ...currentTrip,
-      createdAt: serverTimestamp(),   // Firestore形式に更新
+      createdAt: serverTimestamp()
     });
 
     console.log("🔥 Trip saved with ID:", docRef.id);
@@ -65,21 +49,58 @@ async function createTrip() {
 
 window.createTrip = createTrip;
 
-// ---- 「旅に出る」ボタンと接続 ----
-const confirmGoBtn = document.getElementById("confirmGo");
+// ---- DOM が読み込まれてからイベントをつなぐ ----
+window.addEventListener("load", () => {
+  console.log("trip-planner script loaded");
 
-confirmGoBtn.addEventListener("click", async () => {
-  const destText = document
-    .getElementById("confirmDestination")
-    .textContent
-    .trim();
+  const participantInput = document.getElementById("participantName");
+  const addParticipantBtn = document.getElementById("addParticipant");
+  const participantListEl = document.getElementById("participantList");
+  const confirmGoBtn = document.getElementById("confirmGo");
 
-  currentTrip.destination = destText || "";
-  currentTrip.createdAt = Date.now();
+  console.log("elements found:", {
+    participantInput,
+    addParticipantBtn,
+    participantListEl,
+    confirmGoBtn
+  });
 
-  const tripId = await createTrip();
-  console.log("Trip saved from button:", tripId);
+  // 参加者追加
+  if (participantInput && addParticipantBtn && participantListEl) {
+    addParticipantBtn.addEventListener("click", () => {
+      const name = participantInput.value.trim();
+      if (!name) return;
+
+      if (!currentTrip.participants.includes(name)) {
+        currentTrip.participants.push(name);
+
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.textContent = name;
+        participantListEl.appendChild(chip);
+
+        console.log("participants:", currentTrip.participants);
+      }
+
+      participantInput.value = "";
+    });
+  }
+
+  // 「旅に出る」ボタン
+  if (confirmGoBtn) {
+    confirmGoBtn.addEventListener("click", async () => {
+      const destEl = document.getElementById("confirmDestination");
+      const destText = destEl ? destEl.textContent.trim() : "";
+
+      currentTrip.destination = destText || "";
+      currentTrip.createdAt = Date.now();
+
+      const tripId = await createTrip();
+      console.log("Trip saved from button:", tripId);
+    });
+  }
 });
+
 
 
 
