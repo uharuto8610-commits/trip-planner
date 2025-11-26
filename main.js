@@ -3,6 +3,8 @@ import {
   getFirestore,
   addDoc,
   collection,
+  getDoc,
+  doc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
@@ -29,12 +31,18 @@ const currentTrip = {
 
 window.currentTrip = currentTrip;
 
+let isReadOnly = false;
+let ownerToken = localStorage.getItem('trip-owner-token') || '';
+
 // ---- Firestore: 旅を保存する関数 ----
 async function createTrip() {
   try {
     const tripsRef = collection(db, "trips");
 
     // Firestore に送るデータ
+    if (!ownerToken) {
+      ownerToken = crypto.randomUUID ? crypto.randomUUID() : `t-${Date.now()}-${Math.random()}`;
+    }
     const payload = {
       destination: state.destination || currentTrip.destination || "",
       participants: state.participants.length
@@ -43,10 +51,17 @@ async function createTrip() {
       currency: state.currentCurrencyCode || currentTrip.currency || "",
       currencyRate: state.currentRate || null,
       expectedCount: state.expectedCount || null,
+      ownerToken,
       createdAt: serverTimestamp()
     };
 
     const docRef = await addDoc(tripsRef, payload);
+
+    localStorage.setItem('trip-owner-token', ownerToken);
+    const url = new URL(location.href);
+    url.searchParams.set('trip', docRef.id);
+    url.searchParams.set('token', ownerToken);
+    history.replaceState({}, '', url.toString());
 
     console.log("🔥 Trip saved with ID:", docRef.id);
     alert("保存しました！");
@@ -287,6 +302,17 @@ let photoLoading = false;
 init();
 
 function init() {
+  const params = new URL(location.href).searchParams;
+  const tokenParam = params.get('token');
+  const tripId = params.get('trip');
+  if (tokenParam) {
+    ownerToken = tokenParam;
+    localStorage.setItem('trip-owner-token', ownerToken);
+  }
+  if (tripId) {
+    loadTrip(tripId);
+  }
+
   // 初回は必ずスタート画面から始める
   state.stage = 'start';
   state.prepStep = 'dest';
@@ -318,6 +344,66 @@ function saveState() {
   } catch (e) {
     console.warn('Failed to save data to localStorage', e);
     alert('保存容量を超えました。写真付きのデータは保存できない場合があります。写真を減らすか、必要に応じて再入力してください。');
+  }
+}
+
+function applyReadOnlyUI() {
+  if (!isReadOnly) return;
+  const disable = (el) => {
+    if (el) {
+      el.disabled = true;
+      el.classList.add('disabled');
+    }
+  };
+  [
+    els.addParticipant,
+    els.confirmGo,
+    els.nextToCount,
+    els.nextToNames,
+    els.expenseForm,
+    els.addDayBtn,
+    els.deleteDayBtn,
+    els.photoBtn,
+    els.resetAll
+  ].forEach(disable);
+  document.querySelectorAll('input, select, button').forEach((el) => {
+    if (!el.disabled) disable(el);
+  });
+}
+
+async function loadTrip(tripId) {
+  try {
+    const snap = await getDoc(doc(db, 'trips', tripId));
+    if (!snap.exists()) {
+      alert('旅が見つかりません');
+      return;
+    }
+    const data = snap.data();
+    const urlToken = new URL(location.href).searchParams.get('token') || '';
+    isReadOnly = !!data.ownerToken && data.ownerToken !== urlToken;
+    ownerToken = data.ownerToken || ownerToken;
+    if (!isReadOnly && ownerToken) {
+      localStorage.setItem('trip-owner-token', ownerToken);
+    }
+
+    state.destination = data.destination || '';
+    state.participants = Array.isArray(data.participants)
+      ? data.participants.map((p) => ({ id: p.id, name: p.name }))
+      : [];
+    state.expectedCount = data.expectedCount || state.participants.length || '';
+    state.currentCurrencyCode = data.currency || 'JPY';
+    state.currentRate = data.currencyRate || 1;
+    state.stage = 'main';
+    saveState();
+    renderParticipants();
+    renderExpenses();
+    renderSettlement();
+    updateVisibility(true);
+    applyReadOnlyUI();
+    document.getElementById('expenseSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (error) {
+    console.error('loadTrip error', error);
+    alert('旅の読み込みに失敗しました');
   }
 }
 
